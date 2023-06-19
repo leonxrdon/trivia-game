@@ -19,14 +19,14 @@ fetch('https://opentdb.com/api_category.php')
     });
   })
   .catch(error => {
-    console.error('Ha ocurrido un error al obtener las categorías:', error);
-    // Manejo del error
+    console.error('An error occurred while getting the categories:', error);
+    // Error handling
   });
 
 
 
 let score = 0;
-let selectedCategory = 9; // Valor predeterminado para la categoría (General Knowledge)
+let selectedCategory = 9; // Default value for category (General Knowledge)
 
 categoryForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -45,6 +45,24 @@ function resetGame() {
   categoryForm.style.display = 'block';
 }
 
+function secureShuffleArray(array) {
+  const cryptoArray = new Uint32Array(array.length);
+  crypto.getRandomValues(cryptoArray);
+
+  let currentIndex = array.length;
+  let temporaryValue;
+  let randomIndex;
+
+  while (currentIndex !== 0) {
+    randomIndex = cryptoArray[currentIndex - 1] % currentIndex;
+    currentIndex--;
+
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+}
+
 function startTrivia() {
 
   questionContainer.innerHTML = 'Loading question...';
@@ -61,7 +79,8 @@ function startTrivia() {
       questionContainer.innerHTML += `<h2>${question}</h2>`;
 
       const options = [...answers, correctAnswer];
-      options.sort(() => Math.random() - 0.5);
+     
+      secureShuffleArray(options);
 
       options.forEach(option => {
         const button = document.createElement('button');
@@ -96,6 +115,6 @@ function checkAnswer(button, correctAnswer) {
   }
 
   setTimeout(() => {
-    startTrivia(); // Genera una nueva pregunta después de un breve retraso
+    startTrivia(); // Generates a new question after a short delay
   }, 1500);
 }
