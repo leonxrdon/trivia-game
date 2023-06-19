@@ -6,6 +6,25 @@ const questionContainer = document.getElementById('questionContainer');
 const scoreContainer = document.getElementById('scoreContainer');
 const resetButton = document.getElementById('resetButton');
 
+
+fetch('https://opentdb.com/api_category.php')
+  .then(response => response.json())
+  .then(data => {
+    const categories = data.trivia_categories;
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category.id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
+  })
+  .catch(error => {
+    console.error('Ha ocurrido un error al obtener las categorías:', error);
+    // Manejo del error
+  });
+
+
+
 let score = 0;
 let selectedCategory = 9; // Valor predeterminado para la categoría (General Knowledge)
 
